@@ -1,9 +1,9 @@
 {
     "oss_info":
     {
-        "accessKey":"LTAI4G8KRDmupp3PduWS9sqZ",
-        "accessKeySecret":"66kNYf5U1SR76hdafjTPVYYxTEcrXf",
-        "endpoint":"https://oss-cn-guangzhou.aliyuncs.com/",		
+        "accessKey":"LTAI4G8KRu",
+        "accessKeySecret":"66kNYf5U1SR7f",
+        "endpoint":"https://.aliyuncs.com/",		
         "bucket_name":"fagka",
         "update_root":"hotupdate"
     },
