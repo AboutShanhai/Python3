@@ -1,0 +1,51 @@
+{
+    "oss_info":
+    {
+        "accessKey":"LTAI4G8KRDmupp3PduWS9sqZ",
+        "accessKeySecret":"66kNYf5U1SR76hdafjTPVYYxTEcrXf",
+        "endpoint":"https://oss-cn-guangzhou.aliyuncs.com/",		
+        "bucket_name":"fagka",
+        "update_root":"hotupdate"
+    },
+
+	"ver_info":
+    {
+        "1":"dev_ver/",
+        "2":"test_ver/",
+        "3":"official_ver/"
+    },
+
+	"ver_bucket_name":
+    {
+        "1":"fagka",
+        "2":"fagka",
+        "3":"normal-run"
+    },
+
+    "upload_path":
+    {
+        "root":"hotupdate/",
+        "0":"",
+        "1":"all",
+        "200":"game/qipai/land/",
+        "49":"game/qipai/thirteenx/",
+        "2020":"game/yule/bbtz/",
+        "778":"game/yule/biji",
+        "3":"game/yule/dezhoupuke/",
+        "4":"game/yule/dougongniu/",
+        "55":"game/yule/fightten/",
+        "601":"game/yule/runfastx",
+        "33":"game/yule/sangong/",
+        "34":"game/yule/sgbjh",
+        "6":"game/yule/zhajinhua",
+        "926":"game/yule/longhudou"
+    },
+
+    "upload_path_注释":
+    {
+        "root":"上传根路径目录",
+        "kindid=0":"client=大厅",
+        "kindid=1":"all=所有",
+        "kindid>1":"上传指定游戏id"
+    }
+}
