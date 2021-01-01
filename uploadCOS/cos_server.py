@@ -6,11 +6,10 @@ import sys
 import threading
 import tool
 import time
-from qcloud_cos import CosConfig
+from AesEverywhere import aes256        # pip install aes-everywhere
+from qcloud_cos import CosConfig        # pip install -U cos-python-sdk-v5
 from qcloud_cos import CosS3Client
 
-import base64
-from Crypto.Cipher import AES     #注：python3 安装 Crypto 是 pip3 install -i https://pypi.tuna.tsinghua.edu.cn/simple pycryptodome<br><br>
 
 sys.setrecursionlimit(10000000)
 
@@ -35,26 +34,6 @@ class CFileInfo:
         self.Key = Key
         self.count = 0  # 0：无效状态 1：上传中
         self.th_idx = 0
-
-
-# 解密
-def aes_decode(data, key):
-    try:
-        aes = AES.new(str.encode(key), AES.MODE_ECB)  # 初始化加密器
-        decrypted_text = aes.decrypt(base64.decodebytes(bytes(data, encoding='utf8'))).decode("utf8")  # 解密
-        decrypted_text = decrypted_text[:-ord(decrypted_text[-1])]  # 去除多余补位
-    except Exception as e:
-        pass
-    return decrypted_text
-
-
-# 加密
-def aes_encode(data, key):
-    while len(data) % 16 != 0:     # 补足字符串长度为16的倍数
-        data += (16 - len(data) % 16) * chr(16 - len(data) % 16)
-    data = str.encode(data)
-    aes = AES.new(str.encode(key), AES.MODE_ECB)  # 初始化加密器
-    return str(base64.encodebytes(aes.encrypt(data)), encoding='utf8').replace('\n', '')  # 加密
 
 
 # 文件上传
@@ -85,8 +64,13 @@ def uploadThread(file_info):
 
     # catch 失败
     except Exception as error:
-        print("异常 Path=" + LocalFile_Path)
+        print("异常进行重试处理 Path=" + file_info.LocalFilePath)
+        start_retry_thread(file_info)
         return False
+
+    # 默认失败
+    start_retry_thread(file_info)
+    return False
 
 
 # 开启上传线程
@@ -138,7 +122,7 @@ def start_retry_thread(file_info):
     time.sleep(1)
     g_thread_lock.acquire(True)
     file_info.count += 1
-    print('重试:' + str(file_info.count) + '次: ' + file_info.local_file)
+    print('重试:' + str(file_info.count) + '次: ' + file_info.LocalFilePath)
     g_thread_lock.release()
     uploadThread(file_info)
 
@@ -176,11 +160,15 @@ def startUploadFinder(local_root, ver):
     secret_key = cosinfo['SecretKey']
     region = cosinfo['Region']
 
-    # secret_id = 'secretId'      # 替换为用户的 secretId
+    key = 'Ua^FkU=+l_TYgODQ'
+    secret_id = aes256.decrypt(secret_id, key)
+    secret_key = aes256.decrypt(secret_key, key)
+
+    # secret_id = 'secretId'        # 替换为用户的 secretId
     # secret_key = 'secretKey'      # 替换为用户的 secretKey
-    # region = 'ap-guangzhou'     # 替换为用户的 Region
+    # region = 'ap-guangzhou'       # 替换为用户的 Region
     # 2. 获取客户端对象
-    config = CosConfig(Region=region, SecretId=secret_id, SecretKey=secret_key)    
+    config = CosConfig(Region=region, SecretId=secret_id, SecretKey=secret_key)
     cos_client = CosS3Client(config)
 
     versions = tool.read_file_json(os.path.join(g_root_path, 'version.manifest'))

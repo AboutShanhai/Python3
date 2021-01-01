@@ -10,6 +10,7 @@ import tool
 # import random
 import time
 import oss2
+from AesEverywhere import aes256        # pip install aes-everywhere
 
 sys.setrecursionlimit(10000000)
 
@@ -35,41 +36,6 @@ class CFileInfo:
         self.cloud_name = cloud_name
         self.count = 0  # 0：无效状态 1：上传中
         self.th_idx = 0
-
-
-# 文件上传
-def uploadfile(file_info):
-    global oss2_bucket
-    global g_succee_count
-    try:
-        with open(oss2.to_unicode(file_info.local_file), 'rb') as fp:
-            oss2_bucket.put_object(file_info.cloud_name, fp)
-        meta = oss2_bucket.get_object_meta(file_info.cloud_name)
-
-        # 上传成功->next
-        if meta:
-            print("上传成功:" + file_info.local_file)
-            g_succee_count += 1
-            return True
-
-        # 上传失败
-        uploadfileRetry(file_info)
-        return False
-
-    # catch 失败
-    except Exception as error:
-        uploadfileRetry(file_info)
-        return False
-
-    # 默认失败
-    uploadfileRetry(file_info)
-    return False
-
-
-# 重新上传
-def uploadfileRetry(file_info):
-    time.sleep(1)
-    uploadfile(file_info)
 
 
 # 文件上传
@@ -124,6 +90,7 @@ def start_next_thread(th_idx):
         uploadThread(file_info)
 
 
+# 创建进程
 def start_new_thread(th_idx):
     global g_thread_lock
     global g_upload_list
@@ -173,6 +140,8 @@ def startUploadFinder(uploadZip, local_root, kind_id, ver):
     g_root_path = local_root
     print('上传路径:' + g_root_path)
 
+    versions = tool.read_file_json(os.path.join(g_root_path, 'version.manifest'))
+
     server_info = tool.get_server_info()
     ossinfo = server_info['oss_info']
     ver_bucket_name = server_info['ver_bucket_name']
@@ -189,8 +158,16 @@ def startUploadFinder(uploadZip, local_root, kind_id, ver):
     kind_path = upload_path[kind_id]
     upload_root = ver_path + root_path + kind_path
 
+    key = 'Ua^FkU=+l_TYgODQ'
     accessKey = ossinfo['accessKey']
     accessKeySecret = ossinfo['accessKeySecret']
+
+    accessKey = aes256.decrypt(accessKey, key)
+    accessKeySecret = aes256.decrypt(accessKeySecret, key)
+    # bytes转str
+    accessKey = bytes.decode(accessKey)
+    accessKeySecret = bytes.decode(accessKeySecret)
+
     endPoint = ossinfo['endpoint']
     # bucket_name = ossinfo['bucket_name']
     bucket_name = ver_bucket_name[ver]
@@ -206,24 +183,14 @@ def startUploadFinder(uploadZip, local_root, kind_id, ver):
     # 本地上传文件列表
     g_upload_list = []
     for maindir, subdir, file_list in os.walk(upload_local_path):
+        # 忽略非上传版本目录
+        hotver = str(maindir)
+        if hotver.find(versions['version']) == -1:
+            continue
+
         for filename in file_list:
             apath = os.path.join(maindir, filename)
             apath = apath.replace('\\', '/')
-
-            # 忽略.manifest文件
-            if apath.find('.manifest') != -1:
-                print('忽略文件：' + apath)
-                continue
-
-            # 忽略zip包
-            if uploadZip == '0' and apath.find('/res/zip') != -1:
-                print('忽略文件：' + apath)
-                continue
-
-            # 只传zip时，不带zip路径的文件不传
-            if uploadZip == '2' and apath.find('/res/zip') == -1:
-                print('忽略文件：' + apath)
-                continue
 
             file_path = apath.replace(upload_local_path, '')
             cloud_name = upload_root + file_path
@@ -257,29 +224,17 @@ def startUploadFinder(uploadZip, local_root, kind_id, ver):
     print('上传耗时:', end_time-start_time)
     print('即将上传资源版本文件......')
 
-    # 本地上传文件列表
-    g_upload_list = []
-    for maindir, subdir, file_list in os.walk(upload_local_path):
-        for filename in file_list:
-            apath = os.path.join(maindir, filename)
-            apath = apath.replace('\\', '/')
+    file_info = CFileInfo(os.path.join(g_root_path, 'project.manifest'), os.path.join(upload_root, 'project.manifest'))
+    g_upload_list.append(file_info)
 
-            # 只传.manifest文件
-            if apath.find('.manifest') == -1:
-                # print('忽略文件：' + apath)
-                continue
-
-            file_path = apath.replace(upload_local_path, '')
-            cloud_name = upload_root + file_path
-            file_info = CFileInfo(apath, cloud_name)
-            g_upload_list.append(file_info)
+    file_info = CFileInfo(os.path.join(g_root_path, 'version.manifest'), os.path.join(upload_root, 'version.manifest'))
+    g_upload_list.append(file_info)
 
     g_upload_count = len(g_upload_list)
 
     # 多线程上传===========================================
     print('开始上传: 文件数量=' + str(g_upload_count))
     g_succee_count = 0
-    start_time = time.time()
 
     # 最大上传线程
     g_thread_lock = threading.Lock()
