@@ -1,0 +1,22 @@
+{
+    "cos_info":
+    {
+        "SecretId":"SecretId",
+        "SecretKey":"SecretKey",
+        "Region":"ap-guangzhou"
+    },
+
+	"ver_info":
+    {
+        "1":"dev_ver/hotupdate",
+        "2":"test_ver/hotupdate",
+        "3":"official_ver/hotupdate"
+    },
+
+	"ver_bucket_name":
+    {
+        "1":"fagka-1302952074",
+        "2":"fagka-1302952074",
+        "3":"normal-run-1302952074"
+    }
+}
