@@ -1,7 +1,7 @@
 #!user/bin/python
 # -*- coding: UTF-8 -*-
 
-from AesEverywhere import aes256
+from AesEverywhere import aes256        # pip install aes-everywhere
 
 key = 'Ua^FkU=+l_TYgODQ'
 
@@ -53,3 +53,11 @@ decrypted = bytes.decode(decrypted)
 encrypted = aes256.encrypt(decrypted, key)
 print('加密：', encrypted)
 print('----------------------------------------------------------------------')
+
+# str转bytes：
+bytes('123', encoding='utf8')
+str.encode('123')
+
+# bytes转str：
+str(b'123', encoding='utf-8')
+bytes.decode(b'123')
