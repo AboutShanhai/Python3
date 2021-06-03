@@ -54,6 +54,57 @@ encrypted = aes256.encrypt(decrypted, key)
 print('加密：', encrypted)
 print('----------------------------------------------------------------------')
 
+
+print('\n\n\n------------------------------阿里云OSS 战斗牛、战狼------------------------------')
+# 阿里云OSS
+accessId = 'U2FsdGVkX18F1dVRxNXjoD/PaoeJMh86yyEELCxbLlVknEYFrtwQa2aPzWf1t1B4'
+accessKeySecret = 'U2FsdGVkX1/0ggfZk5GbWi4EIcmWOk6FyYB6vXHXRlfoBurnDkHAmPIkxMr/kMZl'
+# decryption
+decrypted = aes256.decrypt(accessId, key)
+print('解密：', decrypted)
+# bytes转str
+decrypted = bytes.decode(decrypted)
+# encryption
+encrypted = aes256.encrypt(decrypted, key)
+print('加密：', encrypted)
+
+
+# decryption
+decrypted = aes256.decrypt(accessKeySecret, key)
+print('解密：', decrypted)
+# bytes转str
+decrypted = bytes.decode(decrypted)
+# encryption
+encrypted = aes256.encrypt(decrypted, key)
+print('加密：', encrypted)
+print('----------------------------------------------------------------------')
+
+
+print('\n\n\n------------------------------阿里云OSS 天下互娱------------------------------')
+# 阿里云OSS
+accessId = 'U2FsdGVkX1/xOPWHLTJm73OoDbuQ68KSqwgspdl55D1ETJVnzbjZCW5s+w2ZF+lS'
+accessKeySecret = 'U2FsdGVkX18a/gJ5NhKf3WfkztPWVmwowGHlwMkB9BqS5aceFqZbVke6/ipRZxmB'
+# decryption
+decrypted = aes256.decrypt(accessId, key)
+print('解密：', decrypted)
+# bytes转str
+decrypted = bytes.decode(decrypted)
+# encryption
+encrypted = aes256.encrypt(decrypted, key)
+print('加密：', encrypted)
+
+
+# decryption
+decrypted = aes256.decrypt(accessKeySecret, key)
+print('解密：', decrypted)
+# bytes转str
+decrypted = bytes.decode(decrypted)
+# encryption
+encrypted = aes256.encrypt(decrypted, key)
+print('加密：', encrypted)
+print('----------------------------------------------------------------------')
+
+
 # str转bytes：
 bytes('123', encoding='utf8')
 str.encode('123')
