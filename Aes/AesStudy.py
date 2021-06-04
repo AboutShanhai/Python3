@@ -1,4 +1,4 @@
-#!user/bin/python
+#!usr/bin/python3
 # -*- coding: UTF-8 -*-
 
 from AesEverywhere import aes256  # pip install aes-everywhere
