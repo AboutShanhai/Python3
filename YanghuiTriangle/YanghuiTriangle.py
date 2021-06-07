@@ -6,7 +6,8 @@
 # @Software: PyCharm
 
 # 列表解析(三目运算符)
-def YangHui(num=2):
+def YangHui(num=10):
+    print("采用列表解析:")
     LL = [[1]]
     for i in range(1, num):
         LL.append(
@@ -55,7 +56,7 @@ def YangHuiListNewRow(n=10):
 
 
 if __name__ == '__main__':
-    YangHui()
+    YangHui(5)
 
     YangHuiList(5)
 

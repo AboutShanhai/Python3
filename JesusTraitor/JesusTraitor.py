@@ -6,6 +6,7 @@
 # @Software: PyCharm
 
 
+# 耶稣的叛徒
 def JesusTraitor():
     people = list(range(1, 11))
     print(people)
